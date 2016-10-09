@@ -91,6 +91,13 @@ sudo systemctl start asterisk
 cd freepbx
 sudo ./start_asterisk start
 sudo ./install -n
+sudo mkdir /home/asterisk; sudo chown asterisk.asterisk /home/asterisk;
+sudo cp /home/vagrant/sync/data/`ls /home/vagrant/sync/data/ | grep .tgz` /home/asterisk/
+sudo mysql -D asterisk -u root -e "INSERT INTO ampusers (username, password_sha1,sections) VALUES ('admin',SHA1('mypassword'),'*')"
+sudo fwconsole ma download backup
+sudo fwconsole ma install backup
+sudo fwconsole reload
+sudo su - asterisk -c "php /var/lib/asterisk/bin/restore.php --restore=/home/asterisk/`ls /home/asterisk/ | grep .tgz` --items=all"
 sudo sed -i 's/^\(upload_max_filesize\).*/\1 = 120M/' /etc/php.ini
 sudo sed -i 's/^\(post_max_size\).*/\1 = 120M/' /etc/php.ini
 sudo sed -i 's/^\(User\|Group\).*/\1 asterisk/' /etc/httpd/conf/httpd.conf
