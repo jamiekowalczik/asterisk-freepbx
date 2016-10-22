@@ -1,6 +1,8 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+ENV["VAGRANT_DETECTED_OS"] = ENV["VAGRANT_DETECTED_OS"].to_s + " cygwin"
+
 Vagrant.configure(2) do |config|
   config.vm.box = "centos/7"
   config.vm.hostname = "asterisk"
@@ -9,7 +11,7 @@ Vagrant.configure(2) do |config|
 
   # config.vm.network "private_network", ip: "192.168.33.10"
 
-  config.vm.network "public_network", bridge: "wlo1", ip: "192.168.200.250"
+  config.vm.network "public_network", ip: "10.10.10.10"
   # , use_dhcp_assigned_default_route: true
   # , ip: "192.168.200.127"
 

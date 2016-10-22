@@ -97,7 +97,9 @@ sudo mysql -D asterisk -u root -e "INSERT INTO ampusers (username, password_sha1
 sudo fwconsole ma download backup
 sudo fwconsole ma install backup
 sudo fwconsole reload
-sudo su - asterisk -c "php /var/lib/asterisk/bin/restore.php --restore=/home/asterisk/`ls /home/asterisk/ | grep .tgz` --items=all"
+sudo chown -R asterisk.asterisk /var/lib/tftpboot
+sudo chmod -R 777 /var/lib/tftpboot
+sudo su - asterisk -c "php /var/lib/asterisk/bin/restore.php --restore=/vagrant/data/`ls /vagrant/data/ | grep .tgz` --items=all"
 sudo sed -i 's/^\(upload_max_filesize\).*/\1 = 120M/' /etc/php.ini
 sudo sed -i 's/^\(post_max_size\).*/\1 = 120M/' /etc/php.ini
 sudo sed -i 's/^\(User\|Group\).*/\1 asterisk/' /etc/httpd/conf/httpd.conf
