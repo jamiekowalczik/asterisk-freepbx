@@ -1,7 +1,8 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-#ENV["VAGRANT_DETECTED_OS"] = ENV["VAGRANT_DETECTED_OS"].to_s + " cygwin"
+## Uncomment the following if running from Windows (tested on vagrant 1.8.6 with cygwin 64 [rsync,ssh])
+ENV["VAGRANT_DETECTED_OS"] = ENV["VAGRANT_DETECTED_OS"].to_s + " cygwin"
 
 Vagrant.configure(2) do |config|
   config.vm.box = "centos/7"
