@@ -2,7 +2,6 @@
 sudo setenforce 0
 sudo sed -i 's/\(^SELINUX=\).*/\SELINUX=disabled/' /etc/sysconfig/selinux
 sudo sed -i 's/\(^SELINUX=\).*/\SELINUX=disabled/' /etc/selinux/config
-sudo adduser asterisk -M -c "Asterisk User"
 sudo systemctl enable firewalld.service
 sudo systemctl start firewalld.service
 sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
@@ -21,6 +20,7 @@ sudo yum -y install lynx mariadb-server mariadb install mysql-connector-odbc php
 sudo yum -x gstreamer1-plugins-ugly-devel-docs,gstreamer1-plugins-ugly-devel-docs -y install mongodb-server ffmpeg ffmpeg-devel sox-devel lame lame-devel gstreamer* texinfo sox
 sudo yum update -y
 
+sudo adduser asterisk -M -c "Asterisk User"
 sudo usermod -G apache -a asterisk
 sudo systemctl enable mariadb.service
 sudo systemctl start mariadb
@@ -50,7 +50,6 @@ sudo make all
 sudo make install
 
 cd /usr/src
-sudo wget http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-15-current.tar.gz
 sudo wget -O jansson.tar.gz https://github.com/akheron/jansson/archive/v2.7.tar.gz
 sudo tar vxfz jansson.tar.gz
 sudo rm -f jansson.tar.gz
@@ -61,6 +60,7 @@ sudo make
 sudo make install
 
 cd /usr/src
+sudo wget http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-15-current.tar.gz
 sudo tar xvfz asterisk-15-current.tar.gz
 sudo rm -f asterisk-15-current.tar.gz
 cd asterisk-*
