@@ -26,6 +26,15 @@ Vagrant.configure(2) do |config|
   #   vb.memory = "1024"
      vb.name = "asterisk-1"
   end
+  
+  #config.vm.provision "shell", path: "scripts/bootstrap.sh"
+  
+  config.vm.synced_folder "./provision", "/home/vagrant/provision", type: "rsync
+  config.vm.provision :ansible_local do |ansible|
+    ansible.provisioning_path = "/home/vagrant/provision"
+    ansible.inventory_path = "inventory"
+    ansible.playbook = "freepbx-gvsip-ol7.yml"
+    ansible.limit = "all"
+  end
 
-   config.vm.provision "shell", path: "scripts/bootstrap.sh"
 end
