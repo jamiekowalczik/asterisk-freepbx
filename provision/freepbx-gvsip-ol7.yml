@@ -390,7 +390,7 @@
          mode: 644
        when: gvsip is defined
 
-   handlers:
+  handlers:
      - name: restart firewalld
        service: name=firewalld state=restarted
        
