@@ -13,6 +13,10 @@
       - "http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-1.el7.nux.noarch.rpm"
       - "https://mirror.webtatic.com/yum/el7/webtatic-release.rpm"
       - "https://rpm.nodesource.com/pub_8.x/el/7/x86_64/nodesource-release-el7-1.noarch.rpm"
+    gvsip:
+      - { number: '1112223333', oauth_clientid: 'asdf.apps.googleusercontent.com', oauth_secret: 'XXXXXX', refresh_token: 'asdfasdf' }
+      - { number: '1112223334', oauth_clientid: 'asdg.apps.googleusercontent.com', oauth_secret: 'XXXXXY', refresh_token: 'asdfasdg' }
+
       
   tasks:
      - name: Install firewalld
@@ -349,6 +353,11 @@
          - { line: 'Group asterisk', regexp: '^Group ' } 
        notify: restart httpd   
 
+     - name: Set mqueue folder permissions
+       file:
+         path: /var/spool/mqueue
+         mode: 0755
+         
      - name: Start and Enable firewalld
        service: name=firewalld state=started enabled=yes
  
@@ -370,9 +379,18 @@
        
      - name: Open port for tls-sip
        firewalld: port=5061/tcp permanent=yes state=enabled
-       notify: restart firewalld       
-  
-  handlers:
+       notify: restart firewalld
+       
+     - name: Create pjsip_custom.conf
+       template:
+         src: template/pjsip_custom.j2
+         dest: /etc/asterisk/pjsip_custom.conf
+         owner: asterisk
+         group: asterisk
+         mode: 644
+       when: gvsip is defined
+
+   handlers:
      - name: restart firewalld
        service: name=firewalld state=restarted
        
