@@ -1,4 +1,5 @@
 {% for gvsipacct in gvsip %}
+;; Trunk custom dial string: PJSIP/$OUTNUM$@gvsip{{ gvsipacct.number }}
 [gvsip{{ gvsipacct.number }}]
 type=registration
 outbound_auth=gvsip{{ gvsipacct.number }}
