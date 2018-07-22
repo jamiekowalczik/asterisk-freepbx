@@ -1,6 +1,6 @@
 #!/bin/bash
 ## Install as root
-## curl https://raw.githubusercontent.com/jamiekowalczik/asterisk-freepbx/master/provision/install.bash | bash
+## bash <(curl -s https://raw.githubusercontent.com/jamiekowalczik/asterisk-freepbx/master/provision/install.bash)
 yum -y install git python-virtualenv
 virtualenv ansible
 . ./ansible/bin/activate
