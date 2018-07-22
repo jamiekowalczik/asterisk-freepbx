@@ -24,9 +24,7 @@
        yum: name=firewalld state=latest
 
      - name: Disable SELINUX
-       selinux:
-         state: disabled
-       when: selinux_present.stat.exists != False
+       selinux: state=disabled
   
      - name: Add Repositories
        yum: state=present name={{ item }}
