@@ -5,6 +5,7 @@
     
   vars:
     ## Is using a version other than 1.1 you will need to change symlinking tasks
+    ## Future upgrades of openssl using yum will break this
     openssl_archive: "https://www.openssl.org/source/openssl-1.1.0h.tar.gz"
     ## Hacked a task to update build_tools/make_version to use an appropriate version so freepbx works
     asterisk_archive: "https://api.github.com/repos/naf419/asterisk/tarball/gvsip"
@@ -21,23 +22,10 @@
   tasks:
      - name: Install firewalld
        yum: name=firewalld state=latest
-     
-     - name: Check if SELINUX packages are installed
-       stat:
-         path: /etc/selinux/config
-       register: selinux_present
 
      - name: Disable SELINUX
        selinux:
          state: disabled
-       when: selinux_present.stat.exists != False 
-       
-     - name: Install packages required for Ansible to run against this host
-       yum:
-         name: "{{ item }}"
-         state: present
-       with_items:
-         - libselinux-python
        when: selinux_present.stat.exists != False
   
      - name: Add Repositories
@@ -63,6 +51,7 @@
           - php56w-intl
           - php56w-soap
           - nodejs
+          - libselinux-python
           - "@Development Tools"
           - lynx 
           - mariadb-server 
@@ -207,20 +196,20 @@
          state: link
          force: yes
          
-     - name: Copy originall openssl exe
+     - name: Copy original openssl exe
        copy: remote_src=True src=/usr/bin/openssl dest=/usr/bin/openssl_orig
        
-     - name: Remove old files
+     - name: Remove original openssl exe
        file: path=/usr/bin/openssl state=absent
       
-     - name: Create symlink for libcrypto.so.1.1  
+     - name: Create symlink for openssl 1.1  
        file:
          src: "/usr/local/bin/openssl"
          dest: "/usr/bin/openssl"
          state: link
          force: yes
          
-     - name: Configure and install asterisk
+     - name: Configure asterisk
        command: "{{ item.command }}"
        args:
          chdir: "{{ asterisk_path.files.0.path }}"
@@ -232,7 +221,7 @@
          - { command: 'contrib/scripts/get_mp3_source.sh', creates: "{{ asterisk_path.files.0.path }}/addons/mp3" }
          - { command: 'make menuselect.makeopts', creates: "{{ asterisk_path.files.0.path }}/codecs/.makeopts" }
        
-     - name: Run final commands and config only after install
+     - name: Build and install asterisk
        command: "{{ item }}"
        args:
          chdir: "{{ asterisk_path.files.0.path }}"
@@ -301,6 +290,8 @@
          - { command: './start_asterisk start', creates: "/var/www/html/admin/" }
          - { command: './install -n', creates: "/var/www/html/admin/" }
   
+     ## Must be done prior to copying freepbx startup script which doesn't
+     ## support chkconfig
      - name: Start and Enable asterisk
        service: name=asterisk enabled=yes
        
@@ -389,6 +380,7 @@
          group: asterisk
          mode: 644
        when: gvsip is defined
+       notify: restart asterisk
 
   handlers:
      - name: restart firewalld
@@ -396,3 +388,6 @@
        
      - name: restart httpd
        service: name=httpd state=restarted
+       
+     - name: restart asterisk
+       service: name=asterisk state=restarted
