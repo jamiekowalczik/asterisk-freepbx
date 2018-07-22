@@ -33,7 +33,7 @@ Vagrant.configure(2) do |config|
   config.vm.provision :ansible_local do |ansible|
     ansible.provisioning_path = "/home/vagrant/provision"
     ansible.inventory_path = "inventory"
-    ansible.playbook = "freepbx-gvsip-ol7.yml"
+    ansible.playbook = "freepbx-gvsip-el7.yml"
     ansible.limit = "all"
   end
 
